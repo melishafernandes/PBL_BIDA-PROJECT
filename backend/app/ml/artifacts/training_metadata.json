@@ -1,0 +1,74 @@
+[
+  {
+    "sector": "Bank",
+    "chosen_model": "xgboost",
+    "random_forest_cv_accuracy": 0.5294,
+    "xgboost_cv_accuracy": 0.5765,
+    "n_samples": 209,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/Bank.pkl"
+  },
+  {
+    "sector": "Infrastructure",
+    "chosen_model": "xgboost",
+    "random_forest_cv_accuracy": 0.4,
+    "xgboost_cv_accuracy": 0.4235,
+    "n_samples": 105,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/Infrastructure.pkl"
+  },
+  {
+    "sector": "Realty",
+    "chosen_model": "random_forest",
+    "random_forest_cv_accuracy": 0.4947,
+    "xgboost_cv_accuracy": 0.4737,
+    "n_samples": 119,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/Realty.pkl"
+  },
+  {
+    "sector": "FMCG",
+    "chosen_model": "xgboost",
+    "random_forest_cv_accuracy": 0.5353,
+    "xgboost_cv_accuracy": 0.6,
+    "n_samples": 209,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/FMCG.pkl"
+  },
+  {
+    "sector": "IT",
+    "chosen_model": "random_forest",
+    "random_forest_cv_accuracy": 0.5118,
+    "xgboost_cv_accuracy": 0.4706,
+    "n_samples": 209,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/IT.pkl"
+  },
+  {
+    "sector": "Energy",
+    "chosen_model": "random_forest",
+    "random_forest_cv_accuracy": 0.5,
+    "xgboost_cv_accuracy": 0.5,
+    "n_samples": 33,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/Energy.pkl"
+  },
+  {
+    "sector": "Auto",
+    "chosen_model": "xgboost",
+    "random_forest_cv_accuracy": 0.5741,
+    "xgboost_cv_accuracy": 0.6111,
+    "n_samples": 73,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/Auto.pkl"
+  },
+  {
+    "sector": "Pharma",
+    "chosen_model": "xgboost",
+    "random_forest_cv_accuracy": 0.4294,
+    "xgboost_cv_accuracy": 0.4765,
+    "n_samples": 209,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/Pharma.pkl"
+  },
+  {
+    "sector": "Metal",
+    "chosen_model": "xgboost",
+    "random_forest_cv_accuracy": 0.5,
+    "xgboost_cv_accuracy": 0.5526,
+    "n_samples": 97,
+    "model_path": "/Users/melishajfernandes/investiq/backend/app/ml/artifacts/Metal.pkl"
+  }
+]
