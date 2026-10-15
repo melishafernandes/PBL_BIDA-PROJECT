@@ -8,28 +8,10 @@ import { submitProfile, type ProfileData } from "@/lib/api";
 
 const STEPS: { field: keyof ProfileData; title: string; why: string; options: string[] }[] = [
   {
-    field: "experience",
-    title: "How experienced are you as an investor?",
-    why: "This helps us decide how much explanation to show alongside the numbers.",
-    options: ["Beginner", "Intermediate", "Advanced"],
-  },
-  {
-    field: "risk_tolerance",
-    title: "What's your risk tolerance?",
-    why: "Some sectors swing up and down more than others. This is just for context — it doesn't change the model's calculations.",
-    options: ["Conservative", "Moderate", "Aggressive"],
-  },
-  {
-    field: "investment_horizon",
-    title: "What's your investment horizon?",
-    why: "Short-term traders and long-term investors often care about different signals. Again, just for context.",
-    options: ["Short-Term (<1 Year)", "Medium-Term (1-3 Years)", "Long-Term (3+ Years)"],
-  },
-  {
-    field: "gender",
-    title: "What's your gender?",
-    why: "Purely for our own understanding of who uses InvestIQ. Never shown to anyone, and you can skip this.",
-    options: ["Male", "Female", "Other", "Prefer not to say"],
+    field: "interest",
+    title: "What are you most drawn to as an investor?",
+    why: "We'll use this to highlight sectors that match your interests on the dashboard.",
+    options: ["Stability & Safety", "Steady Growth", "High Growth Potential", "Not Sure Yet"],
   },
   {
     field: "monthly_income_range",
@@ -44,44 +26,68 @@ const STEPS: { field: keyof ProfileData; title: string; why: string; options: st
     options: ["Under ₹15,000", "₹15,000–30,000", "₹30,000–60,000", "Above ₹60,000"],
   },
   {
-    field: "interest",
-    title: "What are you most drawn to as an investor?",
-    why: "We'll use this to highlight sectors that match your interests on the dashboard.",
-    options: ["Stability & Safety", "Steady Growth", "High Growth Potential", "Not Sure Yet"],
+    field: "gender",
+    title: "What's your gender?",
+    why: "Purely for our own understanding of who uses InvestIQ. Never shown to anyone, and you can skip this.",
+    options: ["Male", "Female", "Other", "Prefer not to say"],
   },
 ];
+
+function describeError(err: any): string {
+  const detail = err?.response?.data?.detail ?? err?.detail;
+  if (Array.isArray(detail)) {
+    return detail
+      .map((d: any) => `${(d.loc ?? []).slice(1).join(".")}: ${d.msg}`)
+      .join("; ");
+  }
+  if (typeof detail === "string") return detail;
+  return err?.message ?? "Something went wrong. Please try again.";
+}
 
 export default function Onboarding() {
   const [stepIndex, setStepIndex] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const { profile, setField, isComplete } = useProfileStore();
+  const [error, setError] = useState<string | null>(null);
+  const [answers, setAnswers] = useState<Partial<ProfileData>>({});
+  const { profile, setField } = useProfileStore();
   const navigate = useNavigate();
 
   const step = STEPS[stepIndex];
   const isLastStep = stepIndex === STEPS.length - 1;
 
+  const finish = async (finalAnswers: Partial<ProfileData>) => {
+    const payload = { ...profile, ...finalAnswers, market: "India" } as ProfileData;
+    setSubmitting(true);
+    try {
+      await submitProfile(payload);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Failed to submit profile:", err);
+      setError(describeError(err));
+      setSubmitting(false);
+    }
+  };
+
   const handleSelect = async (value: string) => {
+    setError(null);
+    const next = { ...answers, [step.field]: value };
+    setAnswers(next);
     setField(step.field, value);
 
     if (!isLastStep) {
       setStepIndex((i) => i + 1);
       return;
     }
-
-    setSubmitting(true);
-    try {
-      await submitProfile({ ...profile, [step.field]: value, market: "India" } as ProfileData);
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Failed to submit profile:", err);
-      setSubmitting(false);
-    }
+    await finish(next);
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    setError(null);
     if (!isLastStep) {
       setStepIndex((i) => i + 1);
+      return;
     }
+    await finish(answers);
   };
 
   return (
@@ -147,11 +153,13 @@ export default function Onboarding() {
           </p>
         )}
 
-        {isComplete() && stepIndex < STEPS.length - 1 && (
-          <p className="text-center text-xs text-muted-foreground mt-4">
-            Step {stepIndex + 1} of {STEPS.length}
-          </p>
+        {error && (
+          <p className="text-center text-sm text-red-500 mt-4 break-words">{error}</p>
         )}
+
+        <p className="text-center text-xs text-muted-foreground mt-4">
+          Step {stepIndex + 1} of {STEPS.length}
+        </p>
       </div>
     </div>
   );

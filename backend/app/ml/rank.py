@@ -4,7 +4,7 @@ of outperformance — this is what powers the main dashboard (Slide 5/9).
 """
 
 from app.data.snapshot import get_features
-from app.features.engineering import detect_regime
+from app.features.macro_snapshot import get_macro_snapshot
 from app.ml.explain import explain_sector, FEATURE_COLUMNS
 
 
@@ -30,24 +30,4 @@ def get_sector_rankings() -> list[dict]:
 
 
 def get_current_regime() -> dict:
-    features = get_features(use_snapshot=False)
-    any_sector_df = next(iter(features.values()))
-    latest_macro = any_sector_df.iloc[-1]
-
-    regime = detect_regime(latest_macro)
-
-    def direction(value: float) -> str:
-        if value > 0.001:
-            return "up"
-        elif value < -0.001:
-            return "down"
-        return "flat"
-
-    return {
-        "regime": regime,
-        "indicators": {
-            "gdp_growth": direction(latest_macro["gdp_roc"]),
-            "inflation": direction(latest_macro["inflation_roc"]),
-            "interest_rate": direction(latest_macro["rate_change"]),
-        },
-    }
+    return get_macro_snapshot()
